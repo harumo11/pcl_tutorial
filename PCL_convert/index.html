@@ -1,0 +1,210 @@
+<!DOCTYPE html>
+<!--[if IE 8]><html class="no-js lt-ie9" lang="en" > <![endif]-->
+<!--[if gt IE 8]><!--> <html class="no-js" lang="en" > <!--<![endif]-->
+<head>
+  <meta charset="utf-8">
+  <meta http-equiv="X-UA-Compatible" content="IE=edge">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  
+  
+  <link rel="shortcut icon" href="../img/favicon.ico">
+  <title>How to convert from ROS msgs to PCL Point Cloud - My Docs</title>
+  <link href='https://fonts.googleapis.com/css?family=Lato:400,700|Roboto+Slab:400,700|Inconsolata:400,700' rel='stylesheet' type='text/css'>
+
+  <link rel="stylesheet" href="../css/theme.css" type="text/css" />
+  <link rel="stylesheet" href="../css/theme_extra.css" type="text/css" />
+  <link rel="stylesheet" href="../css/highlight.css">
+  <link href="../custom.css" rel="stylesheet">
+  
+  <script>
+    // Current page data
+    var mkdocs_page_name = "How to convert from ROS msgs to PCL Point Cloud";
+    var mkdocs_page_input_path = "PCL_convert.md";
+    var mkdocs_page_url = "/PCL_convert/";
+  </script>
+  
+  <script src="../js/jquery-2.1.1.min.js"></script>
+  <script src="../js/modernizr-2.8.3.min.js"></script>
+  <script type="text/javascript" src="../js/highlight.pack.js"></script> 
+  
+</head>
+
+<body class="wy-body-for-nav" role="document">
+
+  <div class="wy-grid-for-nav">
+
+    
+    <nav data-toggle="wy-nav-shift" class="wy-nav-side stickynav">
+      <div class="wy-side-nav-search">
+        <a href=".." class="icon icon-home"> My Docs</a>
+        <div role="search">
+  <form id ="rtd-search-form" class="wy-form" action="../search.html" method="get">
+    <input type="text" name="q" placeholder="Search docs" />
+  </form>
+</div>
+      </div>
+
+      <div class="wy-menu wy-menu-vertical" data-spy="affix" role="navigation" aria-label="main navigation">
+	<ul class="current">
+	  
+          
+            <li class="toctree-l1">
+		
+    <a class="" href="..">Note about ROS and PCL</a>
+	    </li>
+          
+            <li class="toctree-l1">
+		
+    <a class="" href="../PCL/">PCL</a>
+	    </li>
+          
+            <li class="toctree-l1 current">
+		
+    <a class="current" href="./">How to convert from ROS msgs to PCL Point Cloud</a>
+    <ul class="subnav">
+            
+    <li class="toctree-l2"><a href="#how-to-convert-from-ros-msgs-to-pcl-point-cloud">How to convert from ROS msgs to PCL Point Cloud</a></li>
+    
+        <ul>
+        
+            <li><a class="toctree-l3" href="#how-to-analyze-point-cloud-format">How to analyze Point Cloud format</a></li>
+        
+        </ul>
+    
+
+    </ul>
+	    </li>
+          
+            <li class="toctree-l1">
+		
+    <a class="" href="../ROS/">ROS</a>
+	    </li>
+          
+        </ul>
+      </div>
+      &nbsp;
+    </nav>
+
+    <section data-toggle="wy-nav-shift" class="wy-nav-content-wrap">
+
+      
+      <nav class="wy-nav-top" role="navigation" aria-label="top navigation">
+        <i data-toggle="wy-nav-top" class="fa fa-bars"></i>
+        <a href="..">My Docs</a>
+      </nav>
+
+      
+      <div class="wy-nav-content">
+        <div class="rst-content">
+          <div role="navigation" aria-label="breadcrumbs navigation">
+  <ul class="wy-breadcrumbs">
+    <li><a href="..">Docs</a> &raquo;</li>
+    
+      
+    
+    <li>How to convert from ROS msgs to PCL Point Cloud</li>
+    <li class="wy-breadcrumbs-aside">
+      
+    </li>
+  </ul>
+  <hr/>
+</div>
+          <div role="main">
+            <div class="section">
+              
+                <h1 id="how-to-convert-from-ros-msgs-to-pcl-point-cloud">How to convert from ROS msgs to PCL Point Cloud</h1>
+<p>ROSでPCL関連のパッケージはperception_rosに集まっています．
+Tutorialに簡単な使い方が記載されていますが，ここでは型に
+注目してください．</p>
+<p>ROSでは点群は<strong>sensor_msgs/PointCloud2</strong>型になっていますが，
+PCLで点群の処理を行うためには<strong>pcl::PointCloud</strong>型である必要があります．
+このための相互変換には，<strong>pcl::fromROSMsg</strong>,<strong>pcl::toROSMsg</strong>を
+使います．</p>
+<h2 id="how-to-analyze-point-cloud-format">How to analyze Point Cloud format</h2>
+<p><strong>sensor_msgs/PointCloud2</strong>型から点群の素性を得るためには，
+<strong>width</strong>,<strong>height</strong>,<strong>fields</strong>を見てみましょう．
+前２つはそのままですが，次の<strong>fields</strong>は事前に調べておくと有用です．
+その点群がどのような情報を持っているかを調べられます．</p>
+<div class="admonition todo">
+<p class="admonition-title">Todo</p>
+<p>realsense で確かめる</p>
+</div>
+<p>例えば，realsense D435の点群の<strong>fields</strong>を調べてみましょう．</p>
+<pre><code>rostopic echo /realsense2/points/fields
+</code></pre>
+
+<p>すると，以下のような情報が得られます．</p>
+<pre><code>-
+ name: x
+ offset: 0
+ datatype: 7
+ count: 1
+-
+ name: y
+ offset: 4
+ datataype: 7
+ count: 1
+-
+ name: z
+ offset: 8
+ datatype: 7
+ count: 1
+-
+ name: rgb
+ offset:16
+ datatype: 7
+ count: 1
+</code></pre>
+
+<p>これは，realsenseの点群がx,y,zの位置情報と，rgbの色情報を持っていることを表しています．
+<a href="http://wiki.ros.org/pcl/Overview#Common_PointCloud2_field_names">Commonn PointCloud2 field names</a>に種類が記載されていますが，この他にも点群は法線情報<strong>normal_{x,y,z}</strong>などを持つことができます．</p>
+              
+            </div>
+          </div>
+          <footer>
+  
+    <div class="rst-footer-buttons" role="navigation" aria-label="footer navigation">
+      
+        <a href="../ROS/" class="btn btn-neutral float-right" title="ROS">Next <span class="icon icon-circle-arrow-right"></span></a>
+      
+      
+        <a href="../PCL/" class="btn btn-neutral" title="PCL"><span class="icon icon-circle-arrow-left"></span> Previous</a>
+      
+    </div>
+  
+
+  <hr/>
+
+  <div role="contentinfo">
+    <!-- Copyright etc -->
+    
+  </div>
+
+  Built with <a href="http://www.mkdocs.org">MkDocs</a> using a <a href="https://github.com/snide/sphinx_rtd_theme">theme</a> provided by <a href="https://readthedocs.org">Read the Docs</a>.
+</footer>
+      
+        </div>
+      </div>
+
+    </section>
+
+  </div>
+
+  <div class="rst-versions" role="note" style="cursor: pointer">
+    <span class="rst-current-version" data-toggle="rst-current-version">
+      
+      
+        <span><a href="../PCL/" style="color: #fcfcfc;">&laquo; Previous</a></span>
+      
+      
+        <span style="margin-left: 15px"><a href="../ROS/" style="color: #fcfcfc">Next &raquo;</a></span>
+      
+    </span>
+</div>
+    <script>var base_url = '..';</script>
+    <script src="../js/theme.js"></script>
+      <script src="../search/require.js"></script>
+      <script src="../search/search.js"></script>
+
+</body>
+</html>
