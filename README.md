@@ -4,7 +4,7 @@
 
 簡単なサンプルを載せています．pclの個々の機能の使い方や役に立つ情報などは
 
-このレポジトリの[wiki](sudo apt-get install typora)に乗せています．
+このレポジトリの[wiki](https://github.com/harumo11/pcl_tutorial)に乗せています．
 
 
 
