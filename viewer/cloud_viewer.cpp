@@ -14,5 +14,6 @@ void viewer_psycho(pcl::visualization::PCLVisualizer& viewer){
 int main(int argc, char const* argv[])
 {
 	pcl::PointCloud<pcl::PointXYZRGBA>::Ptr cloud(new pcl::PointCloud<pcl::PointXYZRGBA>());
+	pcl::io::loadPCDFile(
 	return 0;
 }
